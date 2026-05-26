@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <radialGradient id="c1" cx="25%" cy="35%" r="45%">
+      <stop offset="0%" stop-color="rgba(237,227,210,0.25)"/>
+      <stop offset="60%" stop-color="rgba(237,227,210,0.08)"/>
+      <stop offset="100%" stop-color="rgba(237,227,210,0)"/>
+    </radialGradient>
+    <radialGradient id="c2" cx="75%" cy="55%" r="50%">
+      <stop offset="0%" stop-color="rgba(245,239,228,0.2)"/>
+      <stop offset="70%" stop-color="rgba(245,239,228,0.05)"/>
+      <stop offset="100%" stop-color="rgba(245,239,228,0)"/>
+    </radialGradient>
+    <radialGradient id="c3" cx="50%" cy="25%" r="35%">
+      <stop offset="0%" stop-color="rgba(220,210,195,0.12)"/>
+      <stop offset="100%" stop-color="rgba(220,210,195,0)"/>
+    </radialGradient>
+    <radialGradient id="c4" cx="60%" cy="80%" r="40%">
+      <stop offset="0%" stop-color="rgba(230,220,205,0.1)"/>
+      <stop offset="100%" stop-color="rgba(230,220,205,0)"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#c1)"/>
+  <rect width="800" height="600" fill="url(#c2)"/>
+  <rect width="800" height="600" fill="url(#c3)"/>
+  <rect width="800" height="600" fill="url(#c4)"/>
+</svg>

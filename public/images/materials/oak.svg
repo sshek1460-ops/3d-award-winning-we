@@ -1,0 +1,9 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#161412"/>
+  <rect x="100" y="100" width="600" height="400" rx="8" fill="#6F6558" opacity="0.15"/>
+  <text x="400" y="290" font-family="Inter, sans-serif" font-size="28" fill="#6F6558" text-anchor="middle" font-weight="600" opacity="0.6">Smoked Oak</text>
+  <text x="400" y="330" font-family="Inter, sans-serif" font-size="14" fill="#6F6558" text-anchor="middle" opacity="0.3">AUREON</text>
+  <rect x="350" y="350" width="100" height="1" fill="#6F6558" opacity="0.2"/>
+  <circle cx="400" cy="180" r="40" fill="none" stroke="#6F6558" stroke-width="1" opacity="0.15"/>
+  <path d="M380 200 L400 170 L420 200" fill="none" stroke="#6F6558" stroke-width="1.5" opacity="0.2"/>
+</svg>
