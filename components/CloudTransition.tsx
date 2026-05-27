@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
-import { prefersReducedMotion } from "@/lib/utils";
+import { prefersReducedMotion, isMobile } from "@/lib/utils";
 
 const LINE_1 = "ARCHITECTURE";
 const LINE_2 = "AS ATMOSPHERE.";
@@ -36,20 +36,30 @@ export default function CloudTransition() {
 
       if (prefersReducedMotion()) return;
 
+      const mobile = isMobile();
+
       if (labelRef.current) {
         gsap.fromTo(labelRef.current, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 1.0, ease: "power3.out", scrollTrigger: { trigger: section, start: "top 65%", toggleActions: "play none none none" } });
       }
 
       const chars1 = line1Refs.current.filter(Boolean) as HTMLSpanElement[];
       if (chars1.length) {
-        gsap.set(chars1, { opacity: 0, y: 120, rotationX: 90, filter: "blur(16px)" });
-        gsap.to(chars1, { opacity: 1, y: 0, rotationX: 0, filter: "blur(0px)", duration: 0.95, stagger: { each: 0.03, from: "start" }, ease: "power4.out", scrollTrigger: { trigger: section, start: "top 60%", toggleActions: "play none none none" } });
+        if (mobile) {
+          gsap.set(chars1, { opacity: 1, y: 0, rotationX: 0, filter: "blur(0px)" });
+        } else {
+          gsap.set(chars1, { opacity: 0, y: 120, rotationX: 90, filter: "blur(16px)" });
+          gsap.to(chars1, { opacity: 1, y: 0, rotationX: 0, filter: "blur(0px)", duration: 0.95, stagger: { each: 0.03, from: "start" }, ease: "power4.out", scrollTrigger: { trigger: section, start: "top 60%", toggleActions: "play none none none" } });
+        }
       }
 
       const chars2 = line2Refs.current.filter(Boolean) as HTMLSpanElement[];
       if (chars2.length) {
-        gsap.set(chars2, { opacity: 0, y: 90, x: 18, rotationX: 70, filter: "blur(10px)" });
-        gsap.to(chars2, { opacity: 1, y: 0, x: 0, rotationX: 0, filter: "blur(0px)", duration: 0.8, stagger: { each: 0.024, from: "start" }, ease: "power3.out", delay: 0.38, scrollTrigger: { trigger: section, start: "top 60%", toggleActions: "play none none none" } });
+        if (mobile) {
+          gsap.set(chars2, { opacity: 1, y: 0, x: 0, rotationX: 0, filter: "blur(0px)" });
+        } else {
+          gsap.set(chars2, { opacity: 0, y: 90, x: 18, rotationX: 70, filter: "blur(10px)" });
+          gsap.to(chars2, { opacity: 1, y: 0, x: 0, rotationX: 0, filter: "blur(0px)", duration: 0.8, stagger: { each: 0.024, from: "start" }, ease: "power3.out", delay: 0.38, scrollTrigger: { trigger: section, start: "top 60%", toggleActions: "play none none none" } });
+        }
       }
 
       if (dividerRef.current) {

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { gsap } from "@/lib/gsap";
+import { isMobile } from "@/lib/utils";
 
 const AMENITIES = [
   {
@@ -33,6 +34,17 @@ export default function SignatureAmenitiesSection() {
   const progressLineRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const mobile = isMobile();
+
+    if (mobile) {
+      // On mobile, show all amenities statically
+      gsap.set(imageContainersRef.current, { yPercent: 0 });
+      gsap.set(imagesRef.current, { scale: 1, yPercent: 0 });
+      gsap.set(textRefs.current, { autoAlpha: 1, y: 0 });
+      gsap.set(progressLineRef.current, { scaleY: 1 });
+      return;
+    }
+
     let mm = gsap.matchMedia();
 
     mm.add("(prefers-reduced-motion: no-preference)", () => {
@@ -92,7 +104,7 @@ export default function SignatureAmenitiesSection() {
   }, []);
 
   return (
-    <section ref={containerRef} className="w-full h-screen bg-surface text-ink overflow-hidden relative flex flex-col md:flex-row">
+    <section ref={containerRef} className="w-full md:h-screen bg-surface text-ink overflow-hidden relative flex flex-col md:flex-row">
       <div className="w-full md:w-5/12 h-[45vh] md:h-full flex flex-col justify-center px-6 md:px-16 lg:px-24 relative z-10">
         <div className="absolute top-12 md:top-24 left-6 md:left-16 lg:left-24">
           <p className="text-section-label tracking-widest text-muted-ink uppercase flex items-center gap-4">

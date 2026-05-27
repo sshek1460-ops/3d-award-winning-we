@@ -54,7 +54,7 @@ export default function Home() {
       <Preloader />
       <FloatingNav />
       <main ref={mainRef} id="main-content" role="main">
-        <div id="hero-root" style={{ height: "450vh", position: "relative" }}>
+        <div id="hero-root" className="hero-root" style={{ height: "450vh", position: "relative" }}>
           <HeroSection />
         </div>
         <ManifestoSection />

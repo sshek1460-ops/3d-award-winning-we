@@ -2,14 +2,17 @@
 
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { cn, isMobile } from "@/lib/utils";
 
 export default function PrivateAccessSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
+  const [mobile, setMobile] = useState(false);
 
   useEffect(() => {
+    setMobile(isMobile());
+
     const handleMouseMove = (e: MouseEvent) => {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
@@ -33,18 +36,21 @@ export default function PrivateAccessSection() {
   }, []);
 
   return (
-    <section ref={containerRef} className="relative w-full h-[80vh] md:h-screen bg-[#050505] overflow-hidden flex items-center justify-center cursor-none group">
+    <section ref={containerRef} className="relative w-full h-[80vh] md:h-screen bg-[#050505] overflow-hidden flex items-center justify-center md:cursor-none group">
       <div className="absolute inset-0 w-full h-full opacity-40">
         <Image src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200" alt="Exclusive Estate" fill className="object-cover blur-sm scale-105" />
         <div className="absolute inset-0 bg-black/60" />
       </div>
 
-      <div className="absolute inset-0 w-full h-full opacity-100 transition-opacity duration-300" style={{ opacity: isHovering ? 1 : 0, maskImage: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`, WebkitMaskImage: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)` }}>
-        <Image src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200" alt="Exclusive Estate Clear" fill className="object-cover" />
-        <div className="absolute inset-0 pointer-events-none mix-blend-overlay" style={{ background: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, rgba(255,255,255,0.6) 0%, transparent 100%)` }} />
-      </div>
-
-      <div className={cn("absolute pointer-events-none rounded-full border border-white/30 transition-opacity duration-300 z-50", isHovering ? "opacity-100" : "opacity-0")} style={{ width: "600px", height: "600px", left: mousePos.x - 300, top: mousePos.y - 300 }} />
+      {!mobile && (
+        <>
+          <div className="absolute inset-0 w-full h-full opacity-100 transition-opacity duration-300" style={{ opacity: isHovering ? 1 : 0, maskImage: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`, WebkitMaskImage: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)` }}>
+            <Image src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200" alt="Exclusive Estate Clear" fill className="object-cover" />
+            <div className="absolute inset-0 pointer-events-none mix-blend-overlay" style={{ background: `radial-gradient(circle 300px at ${mousePos.x}px ${mousePos.y}px, rgba(255,255,255,0.6) 0%, transparent 100%)` }} />
+          </div>
+          <div className={cn("absolute pointer-events-none rounded-full border border-white/30 transition-opacity duration-300 z-50", isHovering ? "opacity-100" : "opacity-0")} style={{ width: "600px", height: "600px", left: mousePos.x - 300, top: mousePos.y - 300 }} />
+        </>
+      )}
 
       <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl pointer-events-none">
         <div className="flex items-center gap-4 mb-8">

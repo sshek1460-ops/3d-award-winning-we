@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { gsap } from "@/lib/gsap";
-import { prefersReducedMotion } from "@/lib/utils";
+import { prefersReducedMotion, isMobile } from "@/lib/utils";
 
 const MATERIALS = [
   {
@@ -43,6 +43,7 @@ export default function MaterialitySection() {
     if (prefersReducedMotion() || !sectionRef.current) return;
 
     const section = sectionRef.current;
+    const mobile = isMobile();
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
@@ -50,11 +51,20 @@ export default function MaterialitySection() {
           trigger: section,
           start: "top top",
           end: "+=300%",
-          pin: true,
+          pin: !mobile,
           scrub: 1,
           anticipatePin: 1,
         }
       });
+
+      if (mobile) {
+        // Simple fade-in on scroll for mobile
+        gsap.set(imgRefs.current[0], { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" });
+        gsap.set(imgRefs.current[1], { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" });
+        gsap.set(imgRefs.current[2], { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" });
+        gsap.set(textRefs.current, { opacity: 1, y: 0 });
+        return;
+      }
 
       gsap.set(imgRefs.current[0], { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" });
       gsap.set(imgRefs.current[1], { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)" });
@@ -81,7 +91,7 @@ export default function MaterialitySection() {
   }, []);
 
   return (
-    <section ref={sectionRef} id="materiality" className="relative w-full h-screen overflow-hidden" aria-label="Materiality \u2014 The Anatomy of Luxury">
+    <section ref={sectionRef} id="materiality" className="relative w-full md:h-screen overflow-hidden" aria-label="Materiality \u2014 The Anatomy of Luxury">
       <div ref={bgRef} className="absolute inset-0 z-0 transition-colors duration-300" style={{ backgroundColor: MATERIALS[0].bgColor }} />
       <div className="relative z-10 w-full h-full max-w-[1600px] mx-auto px-6 md:px-16 flex flex-col md:flex-row items-center justify-between">
         <div className="w-full md:w-5/12 h-1/2 md:h-full flex flex-col justify-center relative pt-20 md:pt-0">

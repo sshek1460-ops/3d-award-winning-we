@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 import Image from "next/image";
+import { isMobile } from "@/lib/utils";
 
 const AWARDS = [
   {
@@ -42,6 +43,7 @@ export default function AwardsSection() {
   const [activeImage, setActiveImage] = useState<string | null>(null);
 
   useEffect(() => {
+    if (isMobile()) return;
     if (!cursorRef.current || !containerRef.current) return;
 
     const xSet = gsap.quickSetter(cursorRef.current, "x", "px");
@@ -57,7 +59,7 @@ export default function AwardsSection() {
   }, []);
 
   useEffect(() => {
-    if (!cursorRef.current) return;
+    if (!cursorRef.current || isMobile()) return;
 
     if (activeImage) {
       gsap.to(cursorRef.current, { scale: 1, opacity: 1, duration: 0.4, ease: "power3.out" });

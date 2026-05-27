@@ -33,9 +33,15 @@ export default function CraftSection() {
   useEffect(() => {
     if (prefersReducedMotion() || !sectionRef.current) return;
     const section = sectionRef.current;
+    const mobile = isMobile();
 
     const ctx = gsap.context(() => {
       const items = gsap.utils.toArray(".craft-item") as HTMLElement[];
+
+      if (mobile) {
+        gsap.set(items, { opacity: 1, scale: 1, y: 0 });
+        return;
+      }
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -61,7 +67,7 @@ export default function CraftSection() {
     <section
       ref={sectionRef}
       id="craft"
-      className="relative w-full h-screen overflow-hidden"
+      className="relative w-full md:h-screen overflow-hidden"
       style={{ backgroundColor: "var(--background)" }}
       aria-label="Craft \u2014 Obsession Made Physical"
     >

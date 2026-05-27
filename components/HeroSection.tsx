@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useCallback, useState } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
-import { prefersReducedMotion } from "@/lib/utils";
+import { prefersReducedMotion, isMobile } from "@/lib/utils";
 
 const TOTAL_FRAMES = 240;
 const FRAME_PATH = "/hero-frames/ezgif-frame-";
@@ -148,6 +148,8 @@ export default function HeroSection() {
     const section = sectionRef.current;
     if (!wrapper || !section) return;
 
+    const mobile = isMobile();
+
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
         trigger: wrapper,
@@ -183,13 +185,15 @@ export default function HeroSection() {
         gsap.fromTo(
           bloomRef.current,
           { opacity: 0.05 },
-          { opacity: 0.45, ease: "none", scrollTrigger: { trigger: wrapper, start: "top top", end: "55% bottom", scrub: 1 } }
+          { opacity: 0.45, ease: "none", scrollTrigger: { trigger: wrapper, start: "top top", end: mobile ? "30% bottom" : "55% bottom", scrub: 1 } }
         );
       }
 
       if (cloudBackRef.current && cloudMidRef.current && cloudForeRef.current && cloudUltraRef.current && fogRef.current) {
+        const cloudStart = mobile ? "25%" : "55%";
+        const cloudEnd = mobile ? "60%" : "95%";
         const cloudTl = gsap.timeline({
-          scrollTrigger: { trigger: wrapper, start: "55% top", end: "95% top", scrub: true },
+          scrollTrigger: { trigger: wrapper, start: `${cloudStart} top`, end: `${cloudEnd} top`, scrub: true },
         });
 
         cloudTl.fromTo(cloudBackRef.current, { y: "100vh", opacity: 0 }, { y: "-150vh", opacity: 0.8, duration: 1.5, ease: "none" }, 0);
@@ -203,7 +207,7 @@ export default function HeroSection() {
         gsap.fromTo(
           finalTextRef.current,
           { opacity: 0, y: 80, scale: 0.95 },
-          { opacity: 1, y: 0, scale: 1, ease: "power3.out", scrollTrigger: { trigger: wrapper, start: "75% top", end: "95% top", scrub: true } }
+          { opacity: 1, y: 0, scale: 1, ease: "power3.out", scrollTrigger: { trigger: wrapper, start: mobile ? "45% top" : "75% top", end: mobile ? "65% top" : "95% top", scrub: true } }
         );
       }
 
@@ -211,9 +215,11 @@ export default function HeroSection() {
         if (!el) return;
 
         const { start, end } = COPY_SEQUENCE[i];
+        const adjustedStart = mobile ? Math.round(start * 0.5) : start;
+        const adjustedEnd = mobile ? Math.round(end * 0.5) : end;
 
         const tl = gsap.timeline({
-          scrollTrigger: { trigger: wrapper, start: `${start}% top`, end: `${end}% top`, scrub: 1 },
+          scrollTrigger: { trigger: wrapper, start: `${adjustedStart}% top`, end: `${adjustedEnd}% top`, scrub: 1 },
         });
 
         const entries = [

@@ -252,3 +252,39 @@ video {
     transform: translateZ(0);
   }
 }
+
+/* --- Mobile Touch Adjustments --- */
+@media (hover: none) and (pointer: coarse) {
+  .touch-hide {
+    display: none !important;
+  }
+
+  .touch-show {
+    display: block !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .mobile-no-pin {
+    height: auto !important;
+    min-height: 100vh !important;
+  }
+
+  .mobile-stack {
+    flex-direction: column !important;
+  }
+
+  .mobile-full-width {
+    width: 100% !important;
+  }
+
+  .hero-root {
+    height: 250vh !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-root {
+    height: 200vh !important;
+  }
+}

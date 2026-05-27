@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { cn, isMobile } from "@/lib/utils";
 
 const SERVICES = [
   {
@@ -30,6 +30,35 @@ const SERVICES = [
 
 export default function ServicesSection() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [mobile, setMobile] = useState(false);
+
+  useEffect(() => {
+    setMobile(isMobile());
+  }, []);
+
+  if (mobile) {
+    return (
+      <section className="w-full flex flex-col bg-[var(--background)]" style={{ borderTop: "1px solid rgba(180,170,155,0.2)", borderBottom: "1px solid rgba(180,170,155,0.2)" }}>
+        {SERVICES.map((service, index) => (
+          <div key={service.id} className="relative w-full h-[60vh] overflow-hidden" style={{ borderBottom: index < 2 ? "1px solid rgba(180,170,155,0.2)" : "none" }}>
+            <Image src={service.image} alt={service.title} fill quality={60} sizes="100vw" className="object-cover" />
+            <div className="absolute inset-0 bg-black/40" />
+            <div className="relative z-10 w-full h-full flex flex-col justify-center items-center p-8 text-center">
+              <h2 className={cn(service.italic ? "font-editorial italic" : "font-display font-bold uppercase")} style={{ fontSize: "clamp(4rem, 15vw, 10rem)", color: "var(--cloud)", letterSpacing: "-0.04em", lineHeight: 0.85 }}>
+                {service.title}
+              </h2>
+              <div className="flex items-center gap-3 mt-6 mb-3">
+                <div style={{ width: "1.5rem", height: "1px", backgroundColor: "var(--bronze)" }} />
+                <span className="font-display" style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--bronze)" }}>Explore</span>
+                <div style={{ width: "1.5rem", height: "1px", backgroundColor: "var(--bronze)" }} />
+              </div>
+              <p className="font-editorial" style={{ fontSize: "1.25rem", color: "rgba(255,255,255,0.85)", maxWidth: "20rem" }}>{service.label}</p>
+            </div>
+          </div>
+        ))}
+      </section>
+    );
+  }
 
   return (
     <section className="w-full flex flex-row overflow-hidden" style={{ height: "100vh", backgroundColor: "var(--background)", borderTop: "1px solid rgba(180,170,155,0.2)", borderBottom: "1px solid rgba(180,170,155,0.2)" }}>

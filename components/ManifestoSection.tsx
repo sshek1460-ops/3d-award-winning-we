@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
-import { prefersReducedMotion } from "@/lib/utils";
+import { prefersReducedMotion, isMobile } from "@/lib/utils";
 
 const MANIFESTO_STATEMENTS = [
   { text: "We build for people who have seen everything.", highlight: false },
@@ -23,9 +23,16 @@ export default function ManifestoSection() {
     const wrapper = wrapperRef.current;
     if (!section || !wrapper) return;
 
+    const mobile = isMobile();
+
     const ctx = gsap.context(() => {
       const elements = gsap.utils.toArray<HTMLElement>(".manifesto-word", section);
       if (elements.length === 0) return;
+
+      if (mobile) {
+        gsap.set(elements, { opacity: 1, scale: 1, y: 0 });
+        return;
+      }
 
       const tlDuration = 100;
 
@@ -58,7 +65,7 @@ export default function ManifestoSection() {
     <section
       ref={sectionRef}
       id="manifesto"
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden md:min-h-screen"
       style={{ backgroundColor: "var(--surface)" }}
       aria-label="Manifesto \u2014 What We Build"
     >
