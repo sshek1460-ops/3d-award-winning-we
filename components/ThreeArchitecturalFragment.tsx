@@ -5,11 +5,16 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { gsap } from "@/lib/gsap";
 
+const MOBILE = typeof window !== "undefined" && window.innerWidth < 768;
+
 function GlassPanel({ position, size, rotation: rot }: { position: [number, number, number]; size: [number, number]; rotation?: [number, number, number] }) {
-  const mat = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: "#88bbdd", transparent: true, opacity: 0.2, roughness: 0, metalness: 0,
-    transmission: 0.95, thickness: 0.05, side: THREE.DoubleSide, envMapIntensity: 0.5,
-  }), []);
+  const mat = useMemo(() => MOBILE
+    ? new THREE.MeshStandardMaterial({ color: "#88bbdd", transparent: true, opacity: 0.15, side: THREE.DoubleSide })
+    : new THREE.MeshPhysicalMaterial({
+        color: "#88bbdd", transparent: true, opacity: 0.2, roughness: 0, metalness: 0,
+        transmission: 0.95, thickness: 0.05, side: THREE.DoubleSide, envMapIntensity: 0.5,
+      }),
+  []);
   return <mesh position={position} rotation={rot}><planeGeometry args={size} /><primitive object={mat} /></mesh>;
 }
 
@@ -38,22 +43,34 @@ function VillaScene() {
 
   const concrete = useMemo(() => new THREE.MeshStandardMaterial({ color: "#e8e0d0", roughness: 0.85, metalness: 0 }), []);
   const darkConcrete = useMemo(() => new THREE.MeshStandardMaterial({ color: "#c8b8a0", roughness: 0.9, metalness: 0 }), []);
-  const bronze = useMemo(() => new THREE.MeshStandardMaterial({ color: "#b8864e", metalness: 0.9, roughness: 0.2 }), []);
-  const gold = useMemo(() => new THREE.MeshStandardMaterial({ color: "#c8a96a", metalness: 0.95, roughness: 0.1, emissive: "#c8a96a", emissiveIntensity: 0.15 }), []);
+  const bronze = useMemo(() => MOBILE
+    ? new THREE.MeshStandardMaterial({ color: "#b8864e", roughness: 0.4 })
+    : new THREE.MeshStandardMaterial({ color: "#b8864e", metalness: 0.9, roughness: 0.2 }),
+  []);
+  const gold = useMemo(() => MOBILE
+    ? new THREE.MeshStandardMaterial({ color: "#c8a96a", roughness: 0.3 })
+    : new THREE.MeshStandardMaterial({ color: "#c8a96a", metalness: 0.95, roughness: 0.1, emissive: "#c8a96a", emissiveIntensity: 0.15 }),
+  []);
   const wood = useMemo(() => new THREE.MeshStandardMaterial({ color: "#8B7355", roughness: 0.95 }), []);
-  const water = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: "#1a5a6a", transparent: true, opacity: 0.6,
-    roughness: 0, metalness: 0.9, side: THREE.DoubleSide,
-  }), []);
-  const glassMat = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: "#aaccee", transparent: true, opacity: 0.15, roughness: 0, metalness: 0,
-    transmission: 0.9, thickness: 0.1, envMapIntensity: 1, side: THREE.DoubleSide,
-  }), []);
+  const water = useMemo(() => MOBILE
+    ? new THREE.MeshStandardMaterial({ color: "#1a5a6a", transparent: true, opacity: 0.5, side: THREE.DoubleSide })
+    : new THREE.MeshPhysicalMaterial({
+        color: "#1a5a6a", transparent: true, opacity: 0.6,
+        roughness: 0, metalness: 0.9, side: THREE.DoubleSide,
+      }),
+  []);
+  const glassMat = useMemo(() => MOBILE
+    ? new THREE.MeshStandardMaterial({ color: "#aaccee", transparent: true, opacity: 0.12, side: THREE.DoubleSide })
+    : new THREE.MeshPhysicalMaterial({
+        color: "#aaccee", transparent: true, opacity: 0.15, roughness: 0, metalness: 0,
+        transmission: 0.9, thickness: 0.1, envMapIntensity: 1, side: THREE.DoubleSide,
+      }),
+  []);
   const roofMat = useMemo(() => new THREE.MeshStandardMaterial({ color: "#d0c8b8", roughness: 0.9 }), []);
   const hedgeMat = useMemo(() => new THREE.MeshStandardMaterial({ color: "#2a5a3a", roughness: 0.9 }), []);
 
   useEffect(() => {
-    if (!groupRef.current) return;
+    if (!groupRef.current || MOBILE) return;
     const ctx = gsap.context(() => {
       gsap.to(groupRef.current!.rotation, {
         y: Math.PI * 2, ease: "none",
@@ -69,6 +86,10 @@ function VillaScene() {
 
   useFrame(({ clock }) => {
     if (!groupRef.current) return;
+    if (MOBILE) {
+      groupRef.current.rotation.y += 0.004;
+      return;
+    }
     const t = clock.getElapsedTime();
     groupRef.current.position.y = Math.sin(t * 0.3) * 0.12;
     if (waterRef.current) {
@@ -133,7 +154,7 @@ function VillaScene() {
       <mesh position={[0, 0.1, -1.19]}><boxGeometry args={[4, 0.2, 0.08]} /><primitive object={darkConcrete} /></mesh>
 
       {/* Pool water animation */}
-      <mesh ref={waterRef} position={[0, 0.05, -2.2]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[3.6, 1.6]} /><meshPhysicalMaterial color="#2a8a9a" transparent opacity={0.4} roughness={0.1} metalness={0.3} /></mesh>
+      <mesh ref={waterRef} position={[0, 0.05, -2.2]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[3.6, 1.6]} /><primitive object={water} /></mesh>
 
       {/* ===== DECK ===== */}
       <mesh position={[2.2, 0.05, 1.2]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[1.5, 1.5]} /><primitive object={wood} /></mesh>
@@ -179,7 +200,7 @@ function VillaScene() {
       <pointLight position={[1, 0, -2.2]} intensity={0.2} color="#66CCFF" distance={3} decay={1} />
 
       {/* Ambient glowing motes */}
-      {Array.from({ length: 12 }, (_, i) => (
+      {Array.from({ length: MOBILE ? 6 : 12 }, (_, i) => (
         <mesh key={`mote-${i}`} position={[
           (Math.random() - 0.5) * 8,
           Math.random() * 4,
@@ -219,7 +240,7 @@ function RenderController() {
 export default function ThreeArchitecturalFragment() {
   return (
     <div className="w-full h-full" aria-hidden="true">
-      <Canvas camera={{ position: [0, 1.5, 6], fov: 50 }} dpr={[1, 1.2]} gl={{ antialias: true, alpha: true, powerPreference: "high-performance", stencil: false, depth: true }} frameloop="demand">
+      <Canvas camera={{ position: [0, 1.5, 6], fov: 50 }} dpr={MOBILE ? [0.75, 1] : [1, 1.2]} gl={{ antialias: !MOBILE, alpha: true, powerPreference: MOBILE ? "default" : "high-performance", stencil: false, depth: true }} frameloop="demand">
         <color attach="background" args={["#F5F1E8"]} />
         <fog attach="fog" args={["#F5F1E8", 8, 20]} />
         <ambientLight intensity={0.25} color="#F5EFE4" />

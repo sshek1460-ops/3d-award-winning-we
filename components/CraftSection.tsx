@@ -28,7 +28,7 @@ export default function CraftSection() {
   const [showThree, setShowThree] = useState(false);
 
   useEffect(() => {
-    if (!isMobile()) setShowThree(true);
+    setShowThree(true);
   }, []);
 
   useEffect(() => {
