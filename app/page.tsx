@@ -40,15 +40,6 @@ export default function Home() {
     window.addEventListener("load", onLoad, { once: true });
     const refreshTimeout = setTimeout(() => ScrollTrigger.refresh(), 800);
 
-    const sections = gsap.utils.toArray<HTMLElement>("#main-content > section, #main-content > div");
-    sections.forEach((section) => {
-      if (!section || section.id === "hero-root") return;
-      gsap.fromTo(section, { opacity: 0, y: 40 }, {
-        opacity: 1, y: 0, duration: 1, ease: "power3.out",
-        scrollTrigger: { trigger: section, start: "top 85%", toggleActions: "play none none none" },
-      });
-    });
-
     return () => {
       clearTimeout(refreshTimeout);
       window.removeEventListener("load", onLoad);
@@ -63,7 +54,7 @@ export default function Home() {
       <Preloader />
       <FloatingNav />
       <main ref={mainRef} id="main-content" role="main">
-        <div id="hero-root" className="hero-root" style={{ height: "450vh", position: "relative" }}>
+        <div id="hero-root" style={{ height: "450vh", position: "relative" }}>
           <HeroSection />
         </div>
         <ManifestoSection />

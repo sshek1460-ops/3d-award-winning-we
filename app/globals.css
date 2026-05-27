@@ -306,14 +306,4 @@ canvas {
   .mobile-full-width {
     width: 100% !important;
   }
-
-  .hero-root {
-    height: 250vh !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-root {
-    height: 200vh !important;
-  }
 }

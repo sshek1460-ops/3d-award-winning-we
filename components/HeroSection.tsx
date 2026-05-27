@@ -56,33 +56,22 @@ export default function HeroSection() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const dpr = window.devicePixelRatio || 1;
-    const cw = canvas.width / dpr;
-    const ch = canvas.height / dpr;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    const cw = canvas.width;
+    const ch = canvas.height;
     const iw = img.naturalWidth;
     const ih = img.naturalHeight;
 
-    const imgAspect = iw / ih;
-    const canvasAspect = cw / ch;
+    const scale = Math.max(cw / iw, ch / ih);
+    const sw = iw * scale;
+    const sh = ih * scale;
+    const sx = (cw - sw) / 2;
+    const sy = (ch - sh) / 2;
 
-    let sw: number, sh: number, sx: number, sy: number;
-
-    if (imgAspect > canvasAspect) {
-      sh = ch;
-      sw = sh * imgAspect;
-      sx = (cw - sw) / 2;
-      sy = 0;
-    } else {
-      sw = cw;
-      sh = sw / imgAspect;
-      sx = 0;
-      sy = (ch - sh) / 2;
-    }
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
-    ctx.drawImage(img, sx * dpr, sy * dpr, sw * dpr, sh * dpr);
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.drawImage(img, sx, sy, sw, sh);
   }, []);
 
   useEffect(() => {
@@ -90,9 +79,8 @@ export default function HeroSection() {
     if (!canvas) return;
 
     const resize = () => {
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
       canvas.style.width = "100%";
       canvas.style.height = "100%";
       drawFrame(currentFrame.current);
@@ -127,10 +115,9 @@ export default function HeroSection() {
       if (loading || cancelled) return;
       loading = true;
       while (loadQueue.length > 0 && !cancelled) {
-        const batchSize = isMobile() ? 4 : 6;
-        const batch = loadQueue.splice(0, batchSize);
+        const batch = loadQueue.splice(0, 6);
         await Promise.all(batch.map(loadImage));
-        await new Promise(r => setTimeout(r, isMobile() ? 80 : 50));
+        await new Promise(r => setTimeout(r, 50));
       }
       loading = false;
     };
@@ -147,16 +134,16 @@ export default function HeroSection() {
       drawFrame(0);
       if (cancelled) return;
 
-      queueRange(1, Math.min(40, TOTAL_FRAMES));
-      await new Promise(r => setTimeout(r, 200));
+      queueRange(1, Math.min(60, TOTAL_FRAMES));
+      await new Promise(r => setTimeout(r, 300));
       if (cancelled) return;
 
-      queueRange(1, Math.min(100, TOTAL_FRAMES), 2);
+      queueRange(1, Math.min(120, TOTAL_FRAMES), 2);
       await new Promise(r => setTimeout(r, 300));
       if (cancelled) return;
 
       queueRange(1, TOTAL_FRAMES, 4);
-      await new Promise(r => setTimeout(r, 400));
+      await new Promise(r => setTimeout(r, 500));
       if (cancelled) return;
 
       queueRange(1, TOTAL_FRAMES);
