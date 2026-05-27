@@ -122,7 +122,7 @@ export default function FloatingNav() {
       <button
         className={cn(
           "md:hidden flex items-center justify-center",
-          "w-12 h-12 rounded-full",
+          "w-10 h-10 rounded-full",
           "glass-warm",
           "shadow-[0_4px_32px_rgba(138,106,62,0.08)]"
         )}
@@ -130,19 +130,19 @@ export default function FloatingNav() {
         aria-label="Toggle navigation menu"
         aria-expanded={isMobileMenuOpen}
       >
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-[3px]">
           <motion.span
-            className="w-4 h-[1px] bg-[var(--ink)] block"
+            className="w-[14px] h-[1.5px] bg-[var(--ink)] block"
             animate={{
               rotate: isMobileMenuOpen ? 45 : 0,
-              y: isMobileMenuOpen ? 2.5 : 0,
+              y: isMobileMenuOpen ? 3 : 0,
             }}
           />
           <motion.span
-            className="w-4 h-[1px] bg-[var(--ink)] block"
+            className="w-[14px] h-[1.5px] bg-[var(--ink)] block"
             animate={{
               rotate: isMobileMenuOpen ? -45 : 0,
-              y: isMobileMenuOpen ? -2.5 : 0,
+              y: isMobileMenuOpen ? -3 : 0,
             }}
           />
         </div>
@@ -156,8 +156,8 @@ export default function FloatingNav() {
             exit={{ opacity: 0, scale: 0.95, y: -8 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className={cn(
-              "md:hidden absolute top-16 right-0",
-              "w-48 py-3 px-2 rounded-2xl",
+              "md:hidden fixed left-1/2 -translate-x-1/2 top-20",
+              "w-[90vw] max-w-xs py-4 px-3 rounded-2xl",
               "glass-warm",
               "shadow-[0_8px_48px_rgba(138,106,62,0.12)]"
             )}
@@ -167,8 +167,8 @@ export default function FloatingNav() {
                 key={item.href}
                 onClick={() => handleNavClick(item.href)}
                 className={cn(
-                  "w-full text-left px-4 py-3 rounded-xl",
-                  "text-[11px] font-medium uppercase tracking-[0.15em]",
+                  "w-full text-center px-4 py-4 rounded-xl",
+                  "text-[13px] font-medium uppercase tracking-[0.15em]",
                   "transition-colors duration-300",
                   activeSection === item.href.replace("#", "")
                     ? "text-[var(--ink)] bg-[rgba(200,169,106,0.1)]"

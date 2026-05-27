@@ -19,6 +19,14 @@ const COPY_SEQUENCE = [
   { text: "Suspended beyond expectation.", type: "line" as const, start: 43, end: 58 },
 ];
 
+const MOBILE_COPY_SEQUENCE = [
+  { text: "AUREON", type: "title" as const, start: 0, end: 18 },
+  { text: "Some structures are built.", type: "line" as const, start: 14, end: 30 },
+  { text: "Others are summoned.", type: "line" as const, start: 26, end: 42 },
+  { text: "Private worlds.", type: "accent" as const, start: 38, end: 54 },
+  { text: "Suspended beyond expectation.", type: "line" as const, start: 50, end: 68 },
+];
+
 export default function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -34,6 +42,11 @@ export default function HeroSection() {
   const images = useRef<(HTMLImageElement | null)[]>(new Array(TOTAL_FRAMES + 1).fill(null));
   const currentFrame = useRef(0);
   const [loadProgress, setLoadProgress] = useState(0);
+  const [mobile, setMobile] = useState(false);
+
+  useEffect(() => {
+    setMobile(isMobile());
+  }, []);
 
   const drawFrame = useCallback((index: number) => {
     const canvas = canvasRef.current;
@@ -43,19 +56,33 @@ export default function HeroSection() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const cw = canvas.width;
-    const ch = canvas.height;
+    const dpr = window.devicePixelRatio || 1;
+    const cw = canvas.width / dpr;
+    const ch = canvas.height / dpr;
     const iw = img.naturalWidth;
     const ih = img.naturalHeight;
 
-    const scale = Math.max(cw / iw, ch / ih);
-    const sw = iw * scale;
-    const sh = ih * scale;
-    const sx = (cw - sw) / 2;
-    const sy = (ch - sh) / 2;
+    const imgAspect = iw / ih;
+    const canvasAspect = cw / ch;
 
-    ctx.clearRect(0, 0, cw, ch);
-    ctx.drawImage(img, sx, sy, sw, sh);
+    let sw: number, sh: number, sx: number, sy: number;
+
+    if (imgAspect > canvasAspect) {
+      sh = ch;
+      sw = sh * imgAspect;
+      sx = (cw - sw) / 2;
+      sy = 0;
+    } else {
+      sw = cw;
+      sh = sw / imgAspect;
+      sx = 0;
+      sy = (ch - sh) / 2;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(img, sx * dpr, sy * dpr, sw * dpr, sh * dpr);
   }, []);
 
   useEffect(() => {
@@ -63,8 +90,9 @@ export default function HeroSection() {
     if (!canvas) return;
 
     const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
       canvas.style.width = "100%";
       canvas.style.height = "100%";
       drawFrame(currentFrame.current);
@@ -99,9 +127,10 @@ export default function HeroSection() {
       if (loading || cancelled) return;
       loading = true;
       while (loadQueue.length > 0 && !cancelled) {
-        const batch = loadQueue.splice(0, 6);
+        const batchSize = isMobile() ? 4 : 6;
+        const batch = loadQueue.splice(0, batchSize);
         await Promise.all(batch.map(loadImage));
-        await new Promise(r => setTimeout(r, 50));
+        await new Promise(r => setTimeout(r, isMobile() ? 80 : 50));
       }
       loading = false;
     };
@@ -118,16 +147,16 @@ export default function HeroSection() {
       drawFrame(0);
       if (cancelled) return;
 
-      queueRange(1, Math.min(60, TOTAL_FRAMES));
-      await new Promise(r => setTimeout(r, 300));
+      queueRange(1, Math.min(40, TOTAL_FRAMES));
+      await new Promise(r => setTimeout(r, 200));
       if (cancelled) return;
 
-      queueRange(1, Math.min(120, TOTAL_FRAMES), 2);
+      queueRange(1, Math.min(100, TOTAL_FRAMES), 2);
       await new Promise(r => setTimeout(r, 300));
       if (cancelled) return;
 
       queueRange(1, TOTAL_FRAMES, 4);
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 400));
       if (cancelled) return;
 
       queueRange(1, TOTAL_FRAMES);
@@ -148,7 +177,8 @@ export default function HeroSection() {
     const section = sectionRef.current;
     if (!wrapper || !section) return;
 
-    const mobile = isMobile();
+    const mb = isMobile();
+    const sequence = mb ? MOBILE_COPY_SEQUENCE : COPY_SEQUENCE;
 
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
@@ -185,13 +215,13 @@ export default function HeroSection() {
         gsap.fromTo(
           bloomRef.current,
           { opacity: 0.05 },
-          { opacity: 0.45, ease: "none", scrollTrigger: { trigger: wrapper, start: "top top", end: mobile ? "30% bottom" : "55% bottom", scrub: 1 } }
+          { opacity: mb ? 0.3 : 0.45, ease: "none", scrollTrigger: { trigger: wrapper, start: "top top", end: mb ? "30% bottom" : "55% bottom", scrub: 1 } }
         );
       }
 
       if (cloudBackRef.current && cloudMidRef.current && cloudForeRef.current && cloudUltraRef.current && fogRef.current) {
-        const cloudStart = mobile ? "25%" : "55%";
-        const cloudEnd = mobile ? "60%" : "95%";
+        const cloudStart = mb ? "25%" : "55%";
+        const cloudEnd = mb ? "60%" : "95%";
         const cloudTl = gsap.timeline({
           scrollTrigger: { trigger: wrapper, start: `${cloudStart} top`, end: `${cloudEnd} top`, scrub: true },
         });
@@ -207,16 +237,16 @@ export default function HeroSection() {
         gsap.fromTo(
           finalTextRef.current,
           { opacity: 0, y: 80, scale: 0.95 },
-          { opacity: 1, y: 0, scale: 1, ease: "power3.out", scrollTrigger: { trigger: wrapper, start: mobile ? "45% top" : "75% top", end: mobile ? "65% top" : "95% top", scrub: true } }
+          { opacity: 1, y: 0, scale: 1, ease: "power3.out", scrollTrigger: { trigger: wrapper, start: mb ? "45% top" : "75% top", end: mb ? "65% top" : "95% top", scrub: true } }
         );
       }
 
       copyRefs.current.forEach((el, i) => {
-        if (!el) return;
+        if (!el || i >= sequence.length) return;
 
-        const { start, end } = COPY_SEQUENCE[i];
-        const adjustedStart = mobile ? Math.round(start * 0.5) : start;
-        const adjustedEnd = mobile ? Math.round(end * 0.5) : end;
+        const { start, end } = sequence[i];
+        const adjustedStart = mb ? Math.round(start * 0.55) : start;
+        const adjustedEnd = mb ? Math.round(end * 0.55) : end;
 
         const tl = gsap.timeline({
           scrollTrigger: { trigger: wrapper, start: `${adjustedStart}% top`, end: `${adjustedEnd}% top`, scrub: 1 },
@@ -232,11 +262,11 @@ export default function HeroSection() {
         const entry = entries[i % entries.length];
 
         if (i === 4) {
-          tl.fromTo(el, { opacity: 0, z: -1000, x: "20vw", scale: 0.8, ...entry }, { opacity: 1, z: 0, x: 0, scale: 1, rotationX: 0, rotationY: 0, duration: 0.4, ease: "power2.out" });
+          tl.fromTo(el, { opacity: 0, z: -1000, x: "20vw", scale: mb ? 0.7 : 0.8, ...entry }, { opacity: 1, z: 0, x: 0, scale: 1, rotationX: 0, rotationY: 0, duration: 0.4, ease: "power2.out" });
           tl.to(el, { opacity: 0, z: 800, x: "-100vw", scale: 1.5, rotationY: -30, duration: 0.6, ease: "power2.in" });
         } else {
-          tl.fromTo(el, { opacity: 0, z: -1500, scale: 0.6, ...entry }, { opacity: 1, z: 0, scale: 1, rotationX: 0, rotationY: 0, duration: 0.4, ease: "power2.out" });
-          tl.to(el, { opacity: 0, z: 1500, scale: 2.5, duration: 0.6, ease: "power2.in" });
+          tl.fromTo(el, { opacity: 0, z: -1500, scale: mb ? 0.5 : 0.6, ...entry }, { opacity: 1, z: 0, scale: 1, rotationX: 0, rotationY: 0, duration: 0.4, ease: "power2.out" });
+          tl.to(el, { opacity: 0, z: 1500, scale: mb ? 1.8 : 2.5, duration: 0.6, ease: "power2.in" });
         }
       });
     }, section);
@@ -247,7 +277,7 @@ export default function HeroSection() {
   useEffect(() => {
     if (prefersReducedMotion()) return;
 
-    const tl = gsap.timeline({ delay: 2.0 });
+    const tl = gsap.timeline({ delay: mobile ? 1.5 : 2.0 });
 
     if (overlayRef.current) {
       tl.fromTo(overlayRef.current, { opacity: 0 }, { opacity: 1, duration: 1.6 }, 0);
@@ -256,7 +286,7 @@ export default function HeroSection() {
     if (copyRefs.current[0]) {
       tl.fromTo(copyRefs.current[0], { opacity: 0, y: 60, scale: 0.88 }, { opacity: 1, y: 0, scale: 1, duration: 1.4, ease: "power3.out" }, 0.2);
     }
-  }, []);
+  }, [mobile]);
 
   return (
     <section
@@ -270,6 +300,7 @@ export default function HeroSection() {
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
         aria-hidden="true"
+        style={{ imageRendering: "auto" }}
       />
 
       <div
@@ -320,7 +351,7 @@ export default function HeroSection() {
 
       <div className="absolute inset-0 flex items-center justify-center z-[5]" style={{ perspective: "1000px" }}>
         <div className="relative w-full max-w-[90vw] text-center" style={{ transformStyle: "preserve-3d" }}>
-          {COPY_SEQUENCE.map((item, i) => (
+          {(mobile ? MOBILE_COPY_SEQUENCE : COPY_SEQUENCE).map((item, i) => (
             <div
               key={i}
               ref={(el) => { copyRefs.current[i] = el; }}
@@ -328,15 +359,15 @@ export default function HeroSection() {
               style={{ backfaceVisibility: "hidden" }}
             >
               {item.type === "title" ? (
-                <h1 className="font-display select-none" style={{ fontSize: "clamp(4rem, 13vw, 13rem)", lineHeight: 0.85, letterSpacing: "-0.07em", fontWeight: 700, color: "var(--cloud)", textShadow: "0 4px 60px rgba(0,0,0,0.45), 0 0 120px rgba(200,169,106,0.12)" }}>
+                <h1 className="font-display select-none" style={{ fontSize: "clamp(3.5rem, 12vw, 13rem)", lineHeight: 0.85, letterSpacing: "-0.07em", fontWeight: 700, color: "var(--cloud)", textShadow: "0 4px 60px rgba(0,0,0,0.45), 0 0 120px rgba(200,169,106,0.12)" }}>
                   {item.text}
                 </h1>
               ) : item.type === "accent" ? (
-                <p className="font-editorial select-none" style={{ fontSize: "clamp(3rem, 7vw, 6.5rem)", lineHeight: 1, letterSpacing: "-0.04em", fontWeight: 400, fontStyle: "italic", color: "var(--champagne)", textShadow: "0 4px 40px rgba(0,0,0,0.8), 0 0 80px rgba(200,169,106,0.4)" }}>
+                <p className="font-editorial select-none" style={{ fontSize: "clamp(2.5rem, 8vw, 6.5rem)", lineHeight: 1, letterSpacing: "-0.04em", fontWeight: 400, fontStyle: "italic", color: "var(--champagne)", textShadow: "0 4px 40px rgba(0,0,0,0.8), 0 0 80px rgba(200,169,106,0.4)" }}>
                   {item.text}
                 </p>
               ) : (
-                <p className="font-display select-none max-w-4xl mx-auto uppercase" style={{ fontSize: "clamp(1rem, 2vw, 1.4rem)", lineHeight: 1.5, letterSpacing: "0.2em", fontWeight: 500, color: "var(--cloud)", textShadow: "0 4px 30px rgba(0,0,0,0.9), 0 0 100px rgba(0,0,0,0.6)" }}>
+                <p className="font-display select-none max-w-4xl mx-auto uppercase" style={{ fontSize: mobile ? "clamp(0.75rem, 2.5vw, 1.4rem)" : "clamp(1rem, 2vw, 1.4rem)", lineHeight: 1.5, letterSpacing: "0.2em", fontWeight: 500, color: "var(--cloud)", textShadow: "0 4px 30px rgba(0,0,0,0.9), 0 0 100px rgba(0,0,0,0.6)" }}>
                   {item.text}
                 </p>
               )}
@@ -348,25 +379,30 @@ export default function HeroSection() {
       <div ref={finalTextRef} className="absolute inset-0 flex flex-col items-center justify-center z-[6] opacity-0 pointer-events-none" style={{ perspective: "1400px" }}>
         <div className="text-center px-6 md:px-14 flex flex-col items-center" style={{ transformStyle: "preserve-3d" }}>
           <div className="relative z-10" style={{ lineHeight: 0.85 }}>
-            <h2 className="font-display select-none uppercase" style={{ fontSize: "clamp(3.5rem, 11vw, 13rem)", fontWeight: 500, letterSpacing: "-0.03em", color: "#161412" }}>
+            <h2 className="font-display select-none uppercase" style={{ fontSize: mobile ? "clamp(2.5rem, 10vw, 13rem)" : "clamp(3.5rem, 11vw, 13rem)", fontWeight: 500, letterSpacing: "-0.03em", color: "#161412" }}>
               Architecture
             </h2>
           </div>
-          <div className="relative z-20" style={{ lineHeight: 0.7, marginTop: "-0.25em", marginBottom: "3rem" }}>
-            <p className="font-editorial select-none" style={{ fontSize: "clamp(2.5rem, 9.5vw, 11rem)", fontWeight: 400, fontStyle: "italic", letterSpacing: "-0.01em", color: "#9a8566" }}>
+          <div className="relative z-20" style={{ lineHeight: 0.7, marginTop: "-0.25em", marginBottom: mobile ? "1.5rem" : "3rem" }}>
+            <p className="font-editorial select-none" style={{ fontSize: mobile ? "clamp(1.8rem, 8vw, 11rem)" : "clamp(2.5rem, 9.5vw, 11rem)", fontWeight: 400, fontStyle: "italic", letterSpacing: "-0.01em", color: "#9a8566" }}>
               as atmosphere.
             </p>
           </div>
           <div className="relative z-10 opacity-70">
-            <p className="font-display select-none mx-auto" style={{ fontSize: "clamp(0.56rem, 0.9vw, 0.75rem)", letterSpacing: "0.2em", textTransform: "uppercase", color: "#161412", maxWidth: "40ch", fontWeight: 500 }}>
+            <p className="font-display select-none mx-auto" style={{ fontSize: "clamp(0.5rem, 1vw, 0.75rem)", letterSpacing: "0.2em", textTransform: "uppercase", color: "#161412", maxWidth: "40ch", fontWeight: 500 }}>
               Every material is a conversation between light and intention.
+            </p>
+          </div>
+          <div className="relative z-10 opacity-50 mt-4 md:mt-6 max-w-prose">
+            <p className="font-editorial select-none mx-auto italic" style={{ fontSize: "clamp(0.7rem, 1.2vw, 1rem)", color: "#6F6558", maxWidth: "50ch" }}>
+              Where limestone meets sky, and bronze records the passage of time.
             </p>
           </div>
         </div>
       </div>
 
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[6] flex flex-col items-center gap-3 opacity-60">
-        <span className="uppercase font-medium" style={{ fontSize: "0.5625rem", letterSpacing: "0.3em", color: "var(--cloud)" }}>
+        <span className="uppercase font-medium" style={{ fontSize: mobile ? "0.5rem" : "0.5625rem", letterSpacing: "0.3em", color: "var(--cloud)" }}>
           Scroll to explore
         </span>
         <div className="w-[1px] h-10 relative overflow-hidden" aria-hidden="true">

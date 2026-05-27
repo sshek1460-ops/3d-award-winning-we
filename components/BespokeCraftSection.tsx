@@ -46,13 +46,19 @@ export default function BespokeCraftSection() {
               <span className="font-editorial italic font-light lowercase text-[var(--stone)] text-[clamp(4.5rem,9vw,9rem)]">for eternity.</span>
             </h2>
 
-            <p className="font-sans text-xl text-[var(--ink)]/70 max-w-sm font-light leading-relaxed">
+            <p className="font-sans text-base md:text-xl text-[var(--ink)]/70 max-w-sm font-light leading-relaxed">
               We do not build houses. We construct monolithic sanctuaries that bathe in natural light, utilizing ancient stone and cutting-edge glass to shape the ultimate living experience.
+            </p>
+            <p className="font-editorial italic text-lg md:text-xl text-[var(--champagne)]/80 max-w-sm mt-6 leading-relaxed">
+              &ldquo;Every surface, every shadow, every join is a deliberate statement. There is no accident in an AUREON estate.&rdquo;
+            </p>
+            <p className="font-sans text-sm md:text-base text-[var(--ink)]/50 max-w-sm mt-4 font-light leading-relaxed">
+              From the whisper of bronze on oak to the weight of Roman travertine, each material is selected not for trend, but for permanence.
             </p>
           </div>
         </div>
 
-        <div ref={rightRef} className="w-full md:w-7/12 flex flex-col items-end gap-16 md:gap-32 pt-16 md:pt-48">
+        <div ref={rightRef} className="w-full md:w-7/12 flex flex-col items-end gap-12 md:gap-32 pt-8 md:pt-48">
           <div className="img-card relative w-full md:w-[85%] aspect-[4/5] bg-[var(--stone)]/10 overflow-hidden group">
             <Image src="https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&q=80&w=800" alt="Light-filled travertine staircase" fill className="object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105" />
             <div className="absolute inset-0 border border-[var(--ink)]/5 pointer-events-none" />

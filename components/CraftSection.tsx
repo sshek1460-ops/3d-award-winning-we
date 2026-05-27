@@ -13,13 +13,14 @@ const ThreeArchitecturalFragment = dynamic(
 interface CraftItem {
   title: string;
   copy: string;
+  desc: string;
 }
 
 const CRAFT_ITEMS: CraftItem[] = [
-  { title: "Stone", copy: "Cut like silence." },
-  { title: "Glass", copy: "Tuned to hold the sun." },
-  { title: "Water", copy: "Placed where the world needs to pause." },
-  { title: "Blueprint", copy: "Precision made emotional." },
+  { title: "Stone", copy: "Cut like silence.", desc: "Roman travertine, Portuguese marble, basalt from forgotten quarries. Each block selected for its soul." },
+  { title: "Glass", copy: "Tuned to hold the sun.", desc: "Floor-to-ceiling apertures framed in bronze. Light becomes a structural material." },
+  { title: "Water", copy: "Placed where the world needs to pause.", desc: "Reflection pools, zero-edge reservoirs, and thermal springs that dissolve the boundary between body and landscape." },
+  { title: "Blueprint", copy: "Precision made emotional.", desc: "Every angle calculated, every shadow predicted. Logic engineered to evoke feeling." },
 ];
 
 export default function CraftSection() {
@@ -85,6 +86,9 @@ export default function CraftSection() {
             </h3>
             <p className="mt-8 font-editorial" style={{ fontSize: "clamp(1.5rem, 3.5vw, 3rem)", color: "var(--muted-ink)", fontStyle: "italic", textShadow: "0 4px 20px rgba(255,255,255,0.8)" }}>
               {item.copy}
+            </p>
+            <p className="mt-6 font-sans max-w-lg" style={{ fontSize: "clamp(0.8rem, 1.2vw, 1rem)", color: "var(--muted-ink)", lineHeight: 1.7, opacity: 0.7 }}>
+              {item.desc}
             </p>
           </div>
         ))}

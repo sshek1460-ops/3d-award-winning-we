@@ -10,6 +10,8 @@ const MANIFESTO_STATEMENTS = [
   { text: "A villa. A tower. A private horizon.", highlight: true },
   { text: "Every AUREON structure begins as an impossibility.", highlight: false },
   { text: "Then becomes addressable.", highlight: true },
+  { text: "Luxury is not decoration.", highlight: false },
+  { text: "It is precision made emotional.", highlight: true },
 ];
 
 export default function ManifestoSection() {

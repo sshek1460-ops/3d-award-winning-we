@@ -59,7 +59,8 @@ export default function PrivateAccessSection() {
           <div className="w-12 h-[1px] bg-[var(--bronze)]" />
         </div>
         <h2 className="font-display font-bold uppercase text-[clamp(2.5rem,5vw,5rem)] leading-[0.9] tracking-tighter text-white mb-6">Not all worlds <br/> are public.</h2>
-        <p className="font-editorial italic text-xl md:text-2xl text-white/70 max-w-2xl mb-12">The most extraordinary estates never reach the open market. They are whispered about, traded quietly, and reserved for the few.</p>
+        <p className="font-editorial italic text-lg md:text-2xl text-white/70 max-w-2xl mb-6">The most extraordinary estates never reach the open market. They are whispered about, traded quietly, and reserved for the few.</p>
+        <p className="font-serif-alt text-sm md:text-base text-white/40 max-w-lg mb-12 uppercase tracking-[0.15em]">Portfolio Value: $2.4B+ &middot; 14 Countries &middot; By Invitation Only</p>
         <button className="pointer-events-auto group relative px-8 py-4 overflow-hidden rounded-full bg-white text-black font-display text-sm tracking-widest uppercase transition-transform hover:scale-105 active:scale-95">
           <span className="relative z-10 flex items-center gap-3">
             Request the Key

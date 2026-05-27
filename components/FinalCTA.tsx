@@ -55,6 +55,12 @@ export default function FinalCTA() {
             <p className="text-section-body text-[var(--muted-ink)] mb-3 max-w-lg mx-auto">The impossible is usually a blueprint away.</p>
             <p className="text-section-body text-[var(--muted-ink)] mb-3 max-w-lg mx-auto">For those who do not want a residence.</p>
             <p className="text-section-body text-[var(--muted-ink)] max-w-lg mx-auto font-editorial italic">But a world with their name on it.</p>
+            <div className="mt-8 max-w-md mx-auto border-t border-[var(--stone)]/20 pt-6">
+              <p className="font-serif-alt text-xs md:text-sm text-[var(--muted-ink)]/60 uppercase tracking-[0.25em] mb-2">Our Promise</p>
+              <p className="font-editorial text-sm md:text-base text-[var(--ink)]/50 italic leading-relaxed">
+                From the first sketch to the final key, every AUREON estate is crafted with the same obsession: precision made emotional.
+              </p>
+            </div>
           </div>
 
           <div ref={ctaRef} className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-6">
